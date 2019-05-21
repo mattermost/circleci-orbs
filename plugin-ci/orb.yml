@@ -1,0 +1,68 @@
+version: 2.1
+
+description: |
+  Stuff to do CI for mattermost plugins
+
+orbs:
+  aws-s3: circleci/aws-s3@1.0.9
+executors:
+  default:
+    docker:
+      - image: circleci/golang:1.12-node
+commands:
+  deploy:
+    parameters:
+      bucket:
+        type: string
+    steps:
+      - aws-s3/copy:
+          from: "dist/*.tar.gz"
+          to: << parameters.bucket >>
+          arguments: '--acl public-read --cache-control no-cache'
+jobs:
+  lint:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: make check-style
+
+  test:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: make test
+
+  build:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: make dist
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - "*.tar.gz"
+      - store_artifacts:
+          path: dist
+
+  deploy-ci:
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - attach_workspace:
+          at: dist
+      - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-ci.tar.gz'
+      - deploy:
+          bucket: "s3://mattermost-plugins-ci/ci/"
+
+  deploy-release:
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - attach_workspace:
+          at: dist
+      - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-release.tar.gz'
+      - deploy:
+          bucket: "s3://mattermost-plugins-ci/release/"
