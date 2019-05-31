@@ -14,9 +14,11 @@ commands:
     parameters:
       bucket:
         type: string
+      filename:
+        type: string
     steps:
       - aws-s3/copy:
-          from: "dist/*.tar.gz"
+          from: << parameters.filename >>
           to: << parameters.bucket >>
           arguments: '--acl public-read --cache-control no-cache'
 jobs:
@@ -55,6 +57,7 @@ jobs:
           at: dist
       - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-ci.tar.gz'
       - deploy:
+          filename: "dist/*.tar.gz"
           bucket: "s3://mattermost-plugins-ci/ci/"
 
   deploy-release:
@@ -63,6 +66,22 @@ jobs:
     steps:
       - attach_workspace:
           at: dist
-      - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-release.tar.gz'
+      - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-latest.tar.gz'
+      - run: 'cp dist/$CIRCLE_PROJECT_REPONAME-latest.tar.gz dist/$CIRCLE_PROJECT_REPONAME-$CIRCLE_TAG.tar.gz'
       - deploy:
+          filename: "dist/$CIRCLE_PROJECT_REPONAME-latest.tar.gz"
           bucket: "s3://mattermost-plugins-ci/release/"
+      - deploy:
+          filename: "dist/$CIRCLE_PROJECT_REPONAME-$CIRCLE_TAG.tar.gz"
+          bucket: "s3://mattermost-plugins-ci/release/"
+
+  deploy-release-github:
+    docker:
+      - image: cibuilds/github:0.12
+    steps:
+      - attach_workspace:
+          at: dist
+      - run:
+          name: "Publish Release on Github"
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} dist/*.tar.gz
