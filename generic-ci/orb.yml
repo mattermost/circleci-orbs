@@ -1,0 +1,23 @@
+version: 2.1
+
+description: |
+  Stuff to do CI for mattermost in general
+
+orbs:
+  aws-s3: circleci/aws-s3@1.0.9
+executors:
+  default:
+    docker:
+      - image: circleci/golang:1.12-node
+commands:
+  deploy-s3:
+    parameters:
+      bucket:
+        type: string
+      filename:
+        type: string
+    steps:
+      - aws-s3/copy:
+          from: << parameters.filename >>
+          to: << parameters.bucket >>
+          arguments: '--acl public-read --cache-control no-cache'
