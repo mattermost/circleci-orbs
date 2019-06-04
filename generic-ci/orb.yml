@@ -14,10 +14,10 @@ commands:
     parameters:
       bucket:
         type: string
-      filename:
+      folder:
         type: string
     steps:
       - aws-s3/copy:
-          from: << parameters.filename >>
+          from: << parameters.folder >>
           to: << parameters.bucket >>
-          arguments: '--acl public-read --cache-control no-cache'
+          arguments: '--acl public-read --cache-control no-cache --include "*" --recursive'
