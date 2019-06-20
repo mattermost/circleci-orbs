@@ -25,29 +25,45 @@ commands:
           to: << parameters.bucket >>
           arguments: '--acl public-read --cache-control no-cache'
 
+aliases:
+- &restore_cache
+  restore_cache:
+    key: go-mod-v1-{{ checksum "go.sum" }}
+- &save_cache
+  save_cache:
+    key: go-mod-v1-{{ checksum "go.sum" }}
+    paths:
+    - "/go/pkg/mod"
+
 jobs:
   lint:
     executor:
       name: default
     steps:
       - checkout
+      - *restore_cache
       - run: make check-style
+      - *save_cache
 
   test:
     executor:
       name: default
     steps:
       - checkout
+      - *restore_cache
       - run: make test
+      - *save_cache
 
   coverage:
     executor:
       name: default
     steps:
       - checkout
+      - *restore_cache
       - run: 
           name: Generating Coverage Results
           command: make coverage
+      - *save_cache
       - codecov/upload:
         file:  server/coverage.txt
 
@@ -56,7 +72,9 @@ jobs:
       name: default
     steps:
       - checkout
+      - *restore_cache
       - run: make dist
+      - *save_cache
       - persist_to_workspace:
           root: dist
           paths:
