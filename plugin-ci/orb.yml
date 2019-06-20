@@ -5,10 +5,13 @@ description: |
 
 orbs:
   aws-s3: circleci/aws-s3@1.0.9
+  codecov: codecov/codecov@1.0.5
+
 executors:
   default:
     docker:
       - image: circleci/golang:1.12-node
+
 commands:
   deploy:
     parameters:
@@ -50,6 +53,19 @@ jobs:
       - *restore_cache
       - run: make test
       - *save_cache
+
+  coverage:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - *restore_cache
+      - run: 
+          name: Generating Coverage Results
+          command: make coverage
+      - *save_cache
+      - codecov/upload:
+        file:  server/coverage.txt
 
   build:
     executor:
