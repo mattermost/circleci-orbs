@@ -25,6 +25,35 @@ commands:
           to: << parameters.bucket >>
           arguments: '--acl public-read --cache-control no-cache'
 
+  install-golangci-lint:
+    description: Install golangci-lint
+    parameters:
+      version:
+        type: string
+        default: 1.21.0
+      gobin:
+        type: string
+        default: /go/bin
+      prefix:
+        type: string
+        default: v1
+        description: Prefix for cache key to store the binary.
+    steps:
+      - restore_cache:
+          name: Restore golangci-lint cache
+          keys: ['<< parameters.prefix >>-golangci-lint-{{ arch }}-<< parameters.version >>']
+      - run:
+          name: Install golangci-lint
+          command: |
+            mkdir -p << parameters.gobin >>
+            command -v << parameters.gobin >>/golangci-lint && exit
+            download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+            wget -O- -q $download | sh -s -- -b << parameters.gobin >>/ v<< parameters.version >>
+      - save_cache:
+          name: Save golangci-lint cache
+          key: '<< parameters.prefix >>-golangci-lint-{{ arch }}-<< parameters.version >>'
+          paths: [<< parameters.gobin >>/golangci-lint]
+
 aliases:
 - &restore_cache
   restore_cache:
@@ -41,6 +70,7 @@ jobs:
       name: default
     steps:
       - checkout
+      - install-golangci-lint
       - *restore_cache
       - run: make check-style
       - *save_cache
@@ -60,7 +90,7 @@ jobs:
     steps:
       - checkout
       - *restore_cache
-      - run: 
+      - run:
           name: Generating Coverage Results
           command: make coverage
       - *save_cache
