@@ -104,11 +104,14 @@ jobs:
       - checkout
       - *restore_cache
       - run: make dist
+      - run: 'echo "### Supported Mattermost Server Versions: $(cat plugin.json | jq .min_server_version -r)+"  >> release-notes.md'
+      - run: 'mv release-notes.md dist'
       - *save_cache
       - persist_to_workspace:
           root: dist
           paths:
             - "*.tar.gz"
+            - "release-notes.md"
       - store_artifacts:
           path: dist
 
@@ -147,4 +150,4 @@ jobs:
       - run:
           name: "Publish Release on Github"
           command: |
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${CIRCLE_TAG} -delete ${CIRCLE_TAG} dist/*.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -b "$(< ./dist/release-notes.md)" -c ${CIRCLE_SHA1} -n ${CIRCLE_TAG} -delete ${CIRCLE_TAG} dist/*.tar.gz
