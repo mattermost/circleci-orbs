@@ -107,13 +107,12 @@ jobs:
       - run:
           name: "Generating release notes"
           command: |
-            echo "### Supported Mattermost Server Versions: $(cat plugin.json | jq .min_server_version -r)+"  >> release-notes.md
+            echo "### Supported Mattermost Server Versions: $(cat plugin.json | jq .min_server_version -r)+ \n## Enhancements\n\n## Fixes\n"  >> release-notes.md
             if [[ $(git tag -l | wc -l) -eq 1 ]]; then
-              git log --pretty=oneline --abbrev-commit --no-decorate --no-color $(git rev-list --max-parents=0 HEAD) HEAD >> release-notes.md;
+              git log --pretty=oneline --abbrev-commit --no-decorate --no-color $(git rev-list --max-parents=0 HEAD) HEAD >> dist/release-notes.md;
             else
-              git log --pretty=oneline --abbrev-commit --no-decorate --no-color tags/$(git describe --tags --abbrev=0)^..HEAD >> release-notes.md;
+              git log --pretty=oneline --abbrev-commit --no-decorate --no-color $(git describe --tags --abbrev=0 $(git describe --tags --abbrev=0)^)..HEAD >> dist/release-notes.md;
             fi
-            mv release-notes.md dist
       - *save_cache
       - persist_to_workspace:
           root: dist
