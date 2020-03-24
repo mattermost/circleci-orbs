@@ -150,7 +150,7 @@ jobs:
 
   deploy-release-github:
     docker:
-      - image: cibuilds/github:0.12
+      - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
           at: dist
