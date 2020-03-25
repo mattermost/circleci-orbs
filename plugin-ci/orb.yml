@@ -75,6 +75,12 @@ jobs:
       - run:
           name: Checking code style
           command: make check-style
+      - run: go mod tidy -v
+      - run:
+          name: Check git diff
+          command: |
+            git --no-pager diff go.mod go.sum
+            git --no-pager diff --quiet go.mod go.sum
       - *save_cache
 
   test:
