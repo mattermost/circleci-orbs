@@ -79,8 +79,7 @@ jobs:
       - run:
           name: Check git diff
           command: |
-            git --no-pager diff go.mod go.sum
-            git --no-pager diff --quiet go.mod go.sum
+            git --no-pager diff --exit-code go.mod go.sum
       - *save_cache
 
   test:
