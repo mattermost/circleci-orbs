@@ -45,12 +45,12 @@ workflows:
           source-dir: plugin-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          publish-token-variable: CIRCLECI_TOKEN
+          publish-token-variable: METANERD_ORB_PUBLISHER
           orb-name: mattermost/plugin-ci
           requires: *orb_prep_jobs
       - orb-tools/trigger-integration-tests-workflow: # todo no tests currently
           context: matterbuild-circleci-token
-          token-variable: CIRCLECI_TOKEN
+          token-variable: METANERD_ORB_PUBLISHER
           name: trigger-integration-dev
           requires:
             - orb-tools/publish-dev
@@ -70,8 +70,7 @@ workflows:
           filters: *orb_promotion_filters
       - orb-tools/dev-promote-prod-from-git-tag:
           context: matterbuild-circleci-token
-          publish-token-variable: CIRCLECI_TOKEN
-          perform-branch-check: false # merge squash
+          publish-token-variable: METANERD_ORB_PUBLISHER
           orb-name: mattermost/plugin-ci
           add-pr-comment: false
           requires:
