@@ -45,7 +45,6 @@ workflows:
           source-dir: plugin-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          orb-path: plugin-ci/orb.yml
           orb-name: mattermost/plugin-ci
           publish-token-variable: CIRCLECI_TOKEN
           requires: *orb_prep_jobs
