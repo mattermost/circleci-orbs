@@ -48,7 +48,9 @@ workflows:
           orb-name: mattermost/plugin-ci
           publish-token-variable: CIRCLECI_TOKEN
           requires: *orb_prep_jobs
-      - orb-tools/trigger-integration-tests-workflow:
+      - orb-tools/trigger-integration-tests-workflow: # todo add tests later
+          context: matterbuild-circleci-token
+          token-variable: CIRCLECI_TOKEN
           name: trigger-integration-dev
           requires:
             - orb-tools/publish-dev
