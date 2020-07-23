@@ -68,6 +68,7 @@ jobs:
   lint:
     executor:
       name: default
+      resource_class: xlarge
     steps:
       - checkout
       - install-golangci-lint
