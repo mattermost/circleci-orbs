@@ -9,7 +9,7 @@ workflows:
           context: matterbuild-circleci-token
           orb-path: plugin-ci/orb.yml
           orb-ref: mattermost/plugin-ci@dev:${CIRCLE_BRANCH}
-          publish-token-variable: "$CIRCLECI_TOKEN"
+#          publish-token-variable: "$CIRCLECI_TOKEN"
           validate: true
           filters:
             branches:
@@ -25,7 +25,7 @@ workflows:
           orb-path: plugin-ci/orb.yml
           orb-ref: "mattermost/plugin-ci"
           segment: "patch"
-          publish-token-variable: "$CIRCLECI_TOKEN"
+#          publish-token-variable: "$CIRCLECI_TOKEN"
           filters:
             branches:
               only:
@@ -35,7 +35,7 @@ workflows:
           context: matterbuild-circleci-token
           orb-path: plugin-ci/orb.yml
           orb-ref: "mattermost/plugin-ci"
-          publish-token-variable: "$CIRCLECI_TOKEN"
+#          publish-token-variable: "$CIRCLECI_TOKEN"
           validate: true
           requires: [orb-tools/increment]
           filters:
