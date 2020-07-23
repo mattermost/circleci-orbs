@@ -30,5 +30,15 @@ workflows:
             branches:
               only:
                 - master
-          requires:
-            - approve-increment
+          requires: [approve-increment]
+      - orb-tools/publish:
+          context: matterbuild-circleci-token
+          orb-path: plugin-ci/orb.yml
+          orb-ref: "mattermost/plugin-ci"
+          publish-token-variable: "$CIRCLECI_TOKEN"
+          validate: true
+          requires: [orb-tools/increment]
+          filters:
+            branches:
+              only:
+                - master
