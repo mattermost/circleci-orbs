@@ -45,17 +45,17 @@ workflows:
           source-dir: plugin-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          orb-name: mattermost/plugin-ci
           publish-token-variable: CIRCLECI_TOKEN
+          orb-name: mattermost/plugin-ci
           requires: *orb_prep_jobs
-      - orb-tools/trigger-integration-tests-workflow: # todo add tests later
+      - orb-tools/trigger-integration-tests-workflow: # todo no tests currently
           context: matterbuild-circleci-token
           token-variable: CIRCLECI_TOKEN
           name: trigger-integration-dev
           requires:
             - orb-tools/publish-dev
 
-  plugin-ci_integration-tests: # set to false above todo add later
+  plugin-ci_integration-tests: # set to false above no tests currently
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       - integration-tests-for-your-orb
@@ -69,6 +69,8 @@ workflows:
           type: approval
           filters: *orb_promotion_filters
       - orb-tools/dev-promote-prod-from-git-tag:
+          context: matterbuild-circleci-token
+          publish-token-variable: CIRCLECI_TOKEN
           orb-name: mattermost/plugin-ci
           add-pr-comment: false
           requires:
