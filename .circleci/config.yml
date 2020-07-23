@@ -11,6 +11,11 @@ workflows:
           orb-ref: mattermost/plugin-ci@dev:${CIRCLE_BRANCH}
           publish-token-variable: "$CIRCLECI_TOKEN"
           validate: true
+      - approve-increment:
+          type: approval
+          filters:
+            branches:
+              only: master
       - orb-tools/increment:
           orb-path: plugin-ci/orb.yml
           orb-ref: "mattermost/plugin-ci"
@@ -19,3 +24,5 @@ workflows:
           filters:
             branches:
               only: master
+          requires:
+            - approve-increment
