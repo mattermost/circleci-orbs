@@ -6,6 +6,7 @@ workflows:
   plugin-ci:
     jobs:
       - orb-tools/publish:
+          context: matterbuild-circleci-token
           orb-path: plugin-ci/orb.yml
           orb-ref: mattermost/plugin-ci@dev:${CIRCLE_BRANCH}
           publish-token-variable: "$CIRCLECI_TOKEN"
