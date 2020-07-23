@@ -71,6 +71,7 @@ workflows:
       - orb-tools/dev-promote-prod-from-git-tag:
           context: matterbuild-circleci-token
           publish-token-variable: CIRCLECI_TOKEN
+          perform-branch-check: false # merge squash
           orb-name: mattermost/plugin-ci
           add-pr-comment: false
           requires:
