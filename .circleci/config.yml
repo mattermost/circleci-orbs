@@ -3,10 +3,10 @@ orbs:
   orb-tools: circleci/orb-tools@2.0.0
 
 workflows:
-  btd:
+  plugin-ci:
     jobs:
       - orb-tools/publish:
           orb-path: plugin-ci/orb.yml
           orb-ref: mattermost/plugin-ci@dev:${CIRCLE_BRANCH}
-          publish-token-variable: "$CIRCLECI_DEV_API_TOKEN"
+          publish-token-variable: "$CIRCLECI_TOKEN"
           validate: true
