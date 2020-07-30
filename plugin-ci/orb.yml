@@ -110,7 +110,6 @@ jobs:
       name: default
     steps:
       - checkout
-      - *restore_cache
       - run:
           name: Building Plugin Bundle
           command: make dist
@@ -123,7 +122,6 @@ jobs:
             else
               git log --pretty='format:- %h %s' --abbrev-commit --no-decorate --no-color $(git describe --tags --abbrev=0 $(git describe --tags --abbrev=0)^)..HEAD >> dist/release-notes.md
             fi
-      - *save_cache
       - persist_to_workspace:
           root: dist
           paths:
