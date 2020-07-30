@@ -112,9 +112,6 @@ jobs:
       - checkout
       - *restore_cache
       - run:
-          name: Verifying go dependencies cache
-          command: go mod verify
-      - run:
           name: Building Plugin Bundle
           command: make dist
       - run:
