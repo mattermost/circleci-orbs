@@ -4,7 +4,8 @@ description: |
   Stuff to do CI for mattermost in general
 
 orbs:
-  aws-s3: circleci/aws-s3@1.0.9
+  aws-s3: circleci/aws-s3@1.0.16
+
 executors:
   default:
     docker:
