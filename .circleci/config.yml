@@ -7,35 +7,17 @@ orb_prep_jobs: &orb_prep_jobs
     orb-tools/pack
   ]
 
-orb_promotion_filters: &orb_promotion_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /^(major|minor|patch)-release-v\d+\.\d+\.\d+$/
-
 orbs:
   orb-tools: circleci/orb-tools@9.2
   plugin-ci: mattermost/plugin-ci@<<pipeline.parameters.dev-orb-version>>
 
 parameters:
-  run-integration-tests:
-    type: boolean
-    default: false
   dev-orb-version:
     type: string
     default: "dev:alpha"
 
-jobs:
-  integration-tests-for-your-orb:
-    executor: orb-tools/ubuntu
-    steps:
-      - checkout
-    # Test your orb e.g.
-    # - your-orb/your-orb-command
-
 workflows:
-  plugin-ci_lint_pack-validate_publish-dev:
-    unless: << pipeline.parameters.run-integration-tests >>
+  plugin-ci:
     jobs:
       - orb-tools/lint:
           lint-dir: plugin-ci
@@ -45,34 +27,21 @@ workflows:
           source-dir: plugin-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          publish-token-variable: CIRCLECI_TOKEN_NEW
+          publish-token-variable: METANERD_ORB_PUBLISHER
+          checkout: true
           orb-name: mattermost/plugin-ci
+          orb-path: plugin-ci/orb.yml
           requires: *orb_prep_jobs
-      - orb-tools/trigger-integration-tests-workflow: # todo no tests currently
+      # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
+      # e.g. git commit -am "[semver:patch] Final final fix version 2".
+      - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
-          token-variable: CIRCLECI_TOKEN_NEW
-          name: trigger-integration-dev
-          requires:
-            - orb-tools/publish-dev
-
-  plugin-ci_integration-tests: # set to false above no tests currently
-    when: << pipeline.parameters.run-integration-tests >>
-    jobs:
-      - integration-tests-for-your-orb
-
-  # Trigger by running git tag patch-release-v0.0.1
-  # and then git push origin patch-release-v0.0.1
-  plugin-ci_tag-triggered-orb-publishing:
-    unless: << pipeline.parameters.run-integration-tests >>
-    jobs:
-      - hold-for-approval:
-          type: approval
-          filters: *orb_promotion_filters
-      - orb-tools/dev-promote-prod-from-git-tag:
-          context: matterbuild-circleci-token
-          publish-token-variable: CIRCLECI_TOKEN_NEW
+          publish-token-variable: METANERD_ORB_PUBLISHER
           orb-name: mattermost/plugin-ci
           add-pr-comment: false
-          requires:
-            - hold-for-approval
-          filters: *orb_promotion_filters
+          publish-version-tag: false
+          fail-if-semver-not-indicated: false
+          requires: [ orb-tools/publish-dev ]
+          filters:
+            branches:
+              only: master
