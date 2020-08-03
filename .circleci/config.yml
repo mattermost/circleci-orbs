@@ -28,6 +28,7 @@ workflows:
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
+          checkout: true
           orb-name: mattermost/plugin-ci
           orb-path: plugin-ci
           requires: *orb_prep_jobs
