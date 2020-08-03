@@ -30,7 +30,7 @@ workflows:
           publish-token-variable: METANERD_ORB_PUBLISHER
           checkout: true
           orb-name: mattermost/plugin-ci
-          orb-path: plugin-ci
+          orb-path: plugin-ci/orb.yml
           requires: *orb_prep_jobs
       # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
       # e.g. git commit -am "[semver:patch] Final final fix version 2".
