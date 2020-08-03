@@ -16,14 +16,6 @@ parameters:
     type: string
     default: "dev:alpha"
 
-jobs:
-  integration-tests-for-your-orb:
-    executor: orb-tools/ubuntu
-    steps:
-      - checkout
-    # Test your orb e.g.
-    # - your-orb/your-orb-command
-
 workflows:
   plugin-ci_lint_pack-validate_publish-dev:
     jobs:
@@ -43,7 +35,6 @@ workflows:
   # e.g. git commit -am "[semver:patch] Final final fix version 2".
   plugin-ci_orb-publishing:
     jobs:
-      - integration-tests-for-your-orb # todo no tests currently
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
@@ -51,8 +42,6 @@ workflows:
           add-pr-comment: false
           publish-version-tag: false
           fail-if-semver-not-indicated: false
-          requires:
-            - integration-tests-for-your-orb
           filters:
             branches:
               only: master
