@@ -17,7 +17,7 @@ parameters:
     default: "dev:alpha"
 
 workflows:
-  plugin-ci_lint_pack-validate_publish-dev:
+  plugin-ci:
     jobs:
       - orb-tools/lint:
           lint-dir: plugin-ci
@@ -29,16 +29,10 @@ workflows:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
           orb-name: mattermost/plugin-ci
+          orb-path: plugin-ci
           requires: *orb_prep_jobs
-
-  # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
-  # e.g. git commit -am "[semver:patch] Final final fix version 2".
-  plugin-ci_orb-publishing:
-    jobs:
-      - orb-tools/publish-dev: # Republish dev orb so that the promotion step finds the published dev orb commit due to squashing
-          context: matterbuild-circleci-token
-          publish-token-variable: METANERD_ORB_PUBLISHER
-          orb-name: mattermost/plugin-ci
+      # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
+      # e.g. git commit -am "[semver:patch] Final final fix version 2".
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
