@@ -35,6 +35,10 @@ workflows:
   # e.g. git commit -am "[semver:patch] Final final fix version 2".
   plugin-ci_orb-publishing:
     jobs:
+      - orb-tools/publish-dev: # Republish dev orb so that the promotion step finds the published dev orb commit due to squashing
+          context: matterbuild-circleci-token
+          publish-token-variable: METANERD_ORB_PUBLISHER
+          orb-name: mattermost/plugin-ci
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
@@ -42,6 +46,7 @@ workflows:
           add-pr-comment: false
           publish-version-tag: false
           fail-if-semver-not-indicated: false
+          requires: [ orb-tools/publish-dev ]
           filters:
             branches:
               only: master
