@@ -12,24 +12,12 @@ orbs:
   plugin-ci: mattermost/plugin-ci@<<pipeline.parameters.dev-orb-version>>
 
 parameters:
-  run-integration-tests:
-    type: boolean
-    default: true
   dev-orb-version:
     type: string
     default: "dev:alpha"
 
-jobs:
-  integration-tests-for-your-orb:
-    executor: orb-tools/ubuntu
-    steps:
-      - checkout
-    # Test your orb e.g.
-    # - your-orb/your-orb-command
-
 workflows:
   plugin-ci_lint_pack-validate_publish-dev:
-    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint:
           lint-dir: plugin-ci
@@ -42,19 +30,11 @@ workflows:
           publish-token-variable: METANERD_ORB_PUBLISHER
           orb-name: mattermost/plugin-ci
           requires: *orb_prep_jobs
-      - orb-tools/trigger-integration-tests-workflow: # todo no tests currently
-          context: matterbuild-circleci-token
-          token-variable: METANERD_ORB_PUBLISHER
-          name: trigger-integration-dev
-          requires:
-            - orb-tools/publish-dev
 
   # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
   # e.g. git commit -am "[semver:patch] Final final fix version 2".
   plugin-ci_orb-publishing:
-    when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-tests-for-your-orb # todo no tests currently
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
@@ -62,8 +42,6 @@ workflows:
           add-pr-comment: false
           publish-version-tag: false
           fail-if-semver-not-indicated: false
-          requires:
-            - integration-tests-for-your-orb
           filters:
             branches:
               only: master

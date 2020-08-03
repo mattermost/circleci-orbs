@@ -6,7 +6,6 @@ Orbs to help with building Mattermost repositories in circleci
 
 ## Releasing new orb for plugin-ci
 ```bash
-$ git tag patch-release-vX.Y.Z
-$ git push origin patch-release-vX.Y.Z
+$ git commit -am "[semver:patch] Change publishing workflow."
 ```
-Manually approve in circleci
+Options: `"[semver:patch|minor|major|skip]"`
