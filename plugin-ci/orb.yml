@@ -30,7 +30,6 @@ commands:
     parameters:
       version:
         type: string
-        default: 1.31.0
       gobin:
         type: string
         default: /go/bin
@@ -66,12 +65,17 @@ aliases:
 
 jobs:
   lint:
+    parameters:
+      version:
+        default: 1.24.0
+        type: string
     executor:
       name: default
     resource_class: xlarge
     steps:
       - checkout
-      - install-golangci-lint
+      - install-golangci-lint:
+          version: << parameters.version >>
       - *restore_cache
       - run:
           name: Checking code style
