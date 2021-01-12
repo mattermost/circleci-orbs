@@ -9,13 +9,8 @@ orb_prep_jobs: &orb_prep_jobs
 
 orbs:
   orb-tools: circleci/orb-tools@9.2
-  plugin-ci: mattermost/plugin-ci@<<pipeline.parameters.dev-orb-version>>
-  generic-ci: mattermost/generic-ci@<<pipeline.parameters.dev-orb-version>>
-
-parameters:
-  dev-orb-version:
-    type: string
-    default: "dev:alpha"
+  plugin-ci: mattermost/plugin-ci@0.1.4
+  generic-ci: mattermost/generic-ci@0.1.4
 
 workflows:
   plugin-ci:
