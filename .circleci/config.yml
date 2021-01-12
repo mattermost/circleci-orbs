@@ -31,6 +31,9 @@ workflows:
       - hold:
           type: approval
           requires: [ orb-tools/publish-dev ]
+          filters:
+            branches:
+              only: master
       # publish semver by setting commit subject text "[semver:patch|minor|major|skip]"
       # e.g. git commit -am "[semver:patch] Final final fix version 2".
       - orb-tools/dev-promote-prod-from-commit-subject:
@@ -64,6 +67,9 @@ workflows:
       - hold:
           type: approval
           requires: [ orb-tools/publish-dev ]
+          filters:
+            branches:
+              only: master
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
           publish-token-variable: METANERD_ORB_PUBLISHER
