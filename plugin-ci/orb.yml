@@ -78,9 +78,14 @@ jobs:
           command: make check-style
       - run: go mod tidy -v
       - run:
-          name: Check git diff
+          name: Checking diff of go mod files
           command: |
             git --no-pager diff --exit-code go.mod go.sum || (echo "Please run \"go mod tidy\" and commit the changes in go.mod and go.sum." && exit 1)
+      - run: make apply
+      - run:
+          name: Checking diff of generated manifest files
+          command: |
+            git --no-pager diff --exit-code *manifest.* || (echo "Please run \"make apply\" and commit the changes in the generated manifests." && exit 1)
       - *save_cache
 
   test:
