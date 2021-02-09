@@ -23,7 +23,7 @@ workflows:
           source-dir: plugin-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          publish-token-variable: METANERD_ORB_PUBLISHER
+          publish-token-variable: MATTERMOST_BUILD_CIRCLECI_TOKEN
           checkout: true
           orb-name: mattermost/plugin-ci
           orb-path: plugin-ci/orb.yml
@@ -38,7 +38,7 @@ workflows:
       # e.g. git commit -am "[semver:patch] Final final fix version 2".
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
-          publish-token-variable: METANERD_ORB_PUBLISHER
+          publish-token-variable: MATTERMOST_BUILD_CIRCLECI_TOKEN
           orb-name: mattermost/plugin-ci
           add-pr-comment: false
           publish-version-tag: false
@@ -57,7 +57,7 @@ workflows:
           source-dir: generic-ci
       - orb-tools/publish-dev:
           context: matterbuild-circleci-token
-          publish-token-variable: METANERD_ORB_PUBLISHER
+          publish-token-variable: MATTERMOST_BUILD_CIRCLECI_TOKEN
           checkout: true
           orb-name: mattermost/generic-ci
           orb-path: generic-ci/orb.yml
@@ -72,7 +72,7 @@ workflows:
               only: master
       - orb-tools/dev-promote-prod-from-commit-subject:
           context: matterbuild-circleci-token
-          publish-token-variable: METANERD_ORB_PUBLISHER
+          publish-token-variable: MATTERMOST_BUILD_CIRCLECI_TOKEN
           orb-name: mattermost/generic-ci
           add-pr-comment: false
           publish-version-tag: false
