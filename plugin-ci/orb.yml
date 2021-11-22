@@ -10,7 +10,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: circleci/golang:1.16.0-node
+      - image: cimg/go:1.16.10-node
 
 commands:
   deploy:
@@ -33,10 +33,10 @@ commands:
         default: 1.31.0
       gobin:
         type: string
-        default: /go/bin
+        default: $GOPATH/bin
       prefix:
         type: string
-        default: v1
+        default: v2
         description: Prefix for cache key to store the binary.
     steps:
       - restore_cache:
@@ -57,10 +57,10 @@ commands:
 aliases:
 - &restore_cache
   restore_cache:
-    key: go-mod-v1-{{ checksum "go.sum" }}
+    key: go-mod-v2-{{ checksum "go.sum" }}
 - &save_cache
   save_cache:
-    key: go-mod-v1-{{ checksum "go.sum" }}
+    key: go-mod-v2-{{ checksum "go.sum" }}
     paths:
     - "/go/pkg/mod"
 
@@ -137,7 +137,7 @@ jobs:
 
   deploy-ci:
     docker:
-      - image: circleci/python:2.7
+      - image: cimg/python:2.7
     steps:
       - attach_workspace:
           at: dist
@@ -148,7 +148,7 @@ jobs:
 
   deploy-release:
     docker:
-      - image: circleci/python:2.7
+      - image: cimg/python:2.7
     steps:
       - attach_workspace:
           at: dist
