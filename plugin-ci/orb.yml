@@ -68,6 +68,8 @@ jobs:
   lint:
     executor:
       name: default
+    env:
+      npm_config_loglevel=verbose
     resource_class: xlarge
     steps:
       - checkout
@@ -91,6 +93,8 @@ jobs:
   test:
     executor:
       name: default
+    env:
+      npm_config_loglevel=verbose
     steps:
       - checkout
       - *restore_cache
@@ -100,6 +104,8 @@ jobs:
   coverage:
     executor:
       name: default
+    env:
+      npm_config_loglevel=verbose
     steps:
       - checkout
       - *restore_cache
@@ -113,6 +119,8 @@ jobs:
   build:
     executor:
       name: default
+    env:
+      npm_config_loglevel=verbose
     steps:
       - checkout
       - run:
@@ -138,6 +146,8 @@ jobs:
   deploy-ci:
     docker:
       - image: circleci/python:2.7
+    env:
+      npm_config_loglevel=verbose
     steps:
       - attach_workspace:
           at: dist
@@ -149,6 +159,8 @@ jobs:
   deploy-release:
     docker:
       - image: circleci/python:2.7
+    env:
+      npm_config_loglevel=verbose
     steps:
       - attach_workspace:
           at: dist
@@ -164,6 +176,8 @@ jobs:
   deploy-release-github:
     docker:
       - image: cibuilds/github:0.13
+    env:
+      npm_config_loglevel=verbose
     steps:
       - attach_workspace:
           at: dist
