@@ -71,6 +71,7 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
+      - run: git config --global url."ssh://git@".insteadOf git://
       - install-golangci-lint
       - *restore_cache
       - run:
@@ -93,6 +94,7 @@ jobs:
       name: default
     steps:
       - checkout
+      - run: git config --global url."ssh://git@".insteadOf git://
       - *restore_cache
       - run: make test
       - *save_cache
@@ -102,6 +104,7 @@ jobs:
       name: default
     steps:
       - checkout
+      - run: git config --global url."ssh://git@".insteadOf git://
       - *restore_cache
       - run:
           name: Generating Coverage Results
@@ -115,6 +118,7 @@ jobs:
       name: default
     steps:
       - checkout
+      - run: git config --global url."ssh://git@".insteadOf git://
       - run:
           name: Building Plugin Bundle
           command: make dist
