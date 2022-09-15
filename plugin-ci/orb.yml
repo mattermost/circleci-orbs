@@ -10,7 +10,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: circleci/golang:1.16.0-node
+      - image: cimg/go:1.18-node
 
 commands:
   deploy:
@@ -24,19 +24,39 @@ commands:
           from: << parameters.filename >>
           to: << parameters.bucket >>
           arguments: '--acl public-read --cache-control no-cache'
+  install-node:
+    description: Install node
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
+    steps:
+      - run:
+          name: Install Node
+          command: |
+            set +e
+            wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            nvm install << parameters.node_version >>
+            nvm alias default << parameters.node_version >>
+
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
 
   install-golangci-lint:
     description: Install golangci-lint
     parameters:
       version:
         type: string
-        default: 1.31.0
+        default: 1.46.2
       gobin:
         type: string
-        default: /go/bin
+        default: $GOPATH/bin
       prefix:
         type: string
-        default: v1
+        default: v2
         description: Prefix for cache key to store the binary.
     steps:
       - restore_cache:
@@ -57,21 +77,27 @@ commands:
 aliases:
 - &restore_cache
   restore_cache:
-    key: go-mod-v1-{{ checksum "go.sum" }}
+    key: go-mod-v2-{{ checksum "go.sum" }}
 - &save_cache
   save_cache:
-    key: go-mod-v1-{{ checksum "go.sum" }}
+    key: go-mod-v2-{{ checksum "go.sum" }}
     paths:
     - "/go/pkg/mod"
 
 jobs:
   lint:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     executor:
       name: default
     resource_class: xlarge
     steps:
       - checkout
       - install-golangci-lint
+      - install-node:
+          node_version: << parameters.node_version >>
       - *restore_cache
       - run:
           name: Checking code style
@@ -89,19 +115,31 @@ jobs:
       - *save_cache
 
   test:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     executor:
       name: default
     steps:
       - checkout
+      - install-node:
+          node_version: << parameters.node_version >>
       - *restore_cache
       - run: make test
       - *save_cache
 
   coverage:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     executor:
       name: default
     steps:
       - checkout
+      - install-node:
+          node_version: << parameters.node_version >>
       - *restore_cache
       - run:
           name: Generating Coverage Results
@@ -111,10 +149,16 @@ jobs:
         file: server/coverage.txt
 
   build:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     executor:
       name: default
     steps:
       - checkout
+      - install-node:
+          node_version: << parameters.node_version >>
       - run:
           name: Building Plugin Bundle
           command: make dist
@@ -136,8 +180,12 @@ jobs:
           path: dist
 
   deploy-ci:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     docker:
-      - image: circleci/python:2.7
+      - image: cimg/python:2.7
     steps:
       - attach_workspace:
           at: dist
@@ -147,8 +195,12 @@ jobs:
           bucket: "s3://mattermost-plugins-ci/ci/"
 
   deploy-release:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     docker:
-      - image: circleci/python:2.7
+      - image: cimg/python:2.7
     steps:
       - attach_workspace:
           at: dist
@@ -162,6 +214,10 @@ jobs:
           bucket: "s3://mattermost-plugins-ci/release/"
 
   deploy-release-github:
+    parameters:
+      node_version:
+        type: string
+        default: "13.14"
     docker:
       - image: cibuilds/github:0.13
     steps:
