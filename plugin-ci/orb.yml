@@ -1,7 +1,8 @@
 version: 2.1
 
 description: |
-  Stuff to do CI for mattermost plugins
+  Stuff to do CI for mattermost plugins.
+  Note that if an `.nvmrc` file is present in the plugin project's root directory, this file will be used to determine what version of node to install for CI.
 
 orbs:
   aws-s3: circleci/aws-s3@1.0.16
@@ -10,7 +11,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: cimg/go:1.18-node
+      - image: cimg/go:1.19-node
 
 commands:
   deploy:
@@ -34,7 +35,6 @@ commands:
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
             nvm install || nvm install 13.14
             nvm alias default $(node --version)
 
@@ -46,7 +46,7 @@ commands:
     parameters:
       version:
         type: string
-        default: 1.46.2
+        default: 1.49.0
       gobin:
         type: string
         default: $GOPATH/bin
@@ -78,7 +78,7 @@ aliases:
   save_cache:
     key: go-mod-v2-{{ checksum "go.sum" }}
     paths:
-    - "/go/pkg/mod"
+    - "$GOPATH/pkg/mod"
 
 jobs:
   lint:
