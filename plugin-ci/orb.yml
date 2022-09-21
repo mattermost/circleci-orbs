@@ -11,7 +11,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: cimg/go:1.19-node
+      - image: cimg/go:1.19
 
 commands:
   deploy:
