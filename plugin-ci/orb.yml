@@ -165,7 +165,7 @@ jobs:
 
   deploy-ci:
     docker:
-      - image: cimg/python:2.7
+      - image: cimg/python:3.10
     steps:
       - attach_workspace:
           at: dist
@@ -176,7 +176,7 @@ jobs:
 
   deploy-release:
     docker:
-      - image: cimg/python:2.7
+      - image: cimg/python:3.10
     steps:
       - attach_workspace:
           at: dist
