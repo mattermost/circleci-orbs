@@ -40,6 +40,10 @@ commands:
 
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+  use-git-ssh:
+    description: Configure git to use ssh for dependencies that are fetched with git
+    steps:
+      - run: git config --global url."ssh://git@".insteadOf git://
 
   install-golangci-lint:
     description: Install golangci-lint
@@ -87,6 +91,7 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
+      - use-git-ssh
       - install-golangci-lint
       - install-node
       - *restore_cache
@@ -111,6 +116,7 @@ jobs:
     steps:
       - checkout
       - install-node
+      - use-git-ssh
       - *restore_cache
       - run: make test
       - *save_cache
@@ -121,6 +127,7 @@ jobs:
     steps:
       - checkout
       - install-node
+      - use-git-ssh
       - *restore_cache
       - run:
           name: Generating Coverage Results
@@ -135,6 +142,7 @@ jobs:
     steps:
       - checkout
       - install-node
+      - use-git-ssh
       - run:
           name: Building Plugin Bundle
           command: make dist
