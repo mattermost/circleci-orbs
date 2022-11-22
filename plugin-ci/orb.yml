@@ -145,7 +145,7 @@ jobs:
       - use-git-ssh
       - run:
           name: Building Plugin Bundle
-          command: make dist
+          command: env CGO_ENABLED=0 make dist
       - run:
           name: Generating Release Notes
           command: |
